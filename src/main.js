@@ -4,8 +4,10 @@ import {createTripInfo, createTripInfoRoute, createTripInfoDate, createTripInfoP
 import {createSort} from './view/trip-sort';
 import {createTravelList, createTravelListItem} from './view/trip-list';
 import {createNewPoint, createNewPointWithoutOffer, createNewPointWithoutDestination} from './view/edit-trip';
+import {generateEvent} from './mock/trip';
 
 const TASK_COUNT = 3;
+const events = new Array(TASK_COUNT).fill().map(() => generateEvent());
 
 const render = (container, template, place) => container.insertAdjacentHTML(place, template);
 

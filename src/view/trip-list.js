@@ -5,25 +5,18 @@ const createTravelList = () => (
   </ul>`
 );
 
-const createOffersList = (offers) => {
-  if (!offers) {
-    return '';
-  }
-  let listFragment = '';
-  offers.forEach((item) => {
-    const itemList =
-      `<li class="event__offer">
-      <span class="event__offer-title">${item.title}</span>
+const createOffersList = (offers) => (
+  offers.map((element) => (
+    `<li class="event__offer">
+    <span class="event__offer-title">${element.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${item.price}</span>
-      </li>`;
-    listFragment += itemList;
-  });
-  return listFragment;
-};
+      <span class="event__offer-price">${element.price}</span>
+      </li>`
+  )).join(''));
 
 const createTravelListItem = (events) => {
   const {date, type, offer, isFavorite, destination, price} = events;
+  const offersList = offer ? createOffersList(offer) : '';
   const favoriteClassActive = isFavorite ? 'event__favorite-btn--active' : '';
 
   return `<li class="trip-events__item">
@@ -46,7 +39,7 @@ const createTravelListItem = (events) => {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${createOffersList(offer)}
+      ${offersList}
     </ul>
     <button class="event__favorite-btn ${favoriteClassActive}" type="button">
       <span class="visually-hidden">Add to favorite</span>

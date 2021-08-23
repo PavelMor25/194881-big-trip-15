@@ -1,4 +1,4 @@
-import { getTotalprice, getRoute, getDate } from "../utils/utils";
+import { getTotalPrice, getRoute, getDate } from '../utils/utils';
 
 const createTripInfo = () => (
   `<section class="trip-main__trip-info  trip-info">
@@ -14,7 +14,7 @@ const createTripInfoRouteDate = (events) => (
 
 const createTripInfoPrice = (events) => (
   `<p class="trip-info__cost">
-  Total: &euro;&nbsp;<span class="trip-info__cost-value">${getTotalprice(events)}</span>
+  Total: &euro;&nbsp;<span class="trip-info__cost-value">${getTotalPrice(events)}</span>
 </p>`
 );
 

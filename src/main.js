@@ -13,7 +13,6 @@ const events = new Array(TASK_COUNT)
   .map(() => generateEvent())
   .sort((a, b) => a.date.from - b.date.from);
 
-
 const tripMain = document.querySelector('.trip-main');
 
 render(tripMain, createTripInfo(), 'afterbegin');

@@ -17,28 +17,32 @@ const getDateDif = (dateFrom, dateTo) => {
 
 const render = (container, template, place) => container.insertAdjacentHTML(place, template);
 
-const getTotalprice = (events) => {
-  let totalPrice = 0;
-  const offerPrice = (offer) => {
-    let sum = 0;
-    if (!offer) {
-      return 0;
-    }
-    offer.forEach((item) => {
-      sum += item.price;
-    });
-    return sum;
-  };
-  for (let i = 1; i < events.length; i++) {
-    totalPrice += events[i].price;
-    totalPrice += offerPrice(events[i].offer);
-  }
-  // events.forEach((item) => {
-  //   totalPrice += item.price;
-  //   totalPrice += offerPrice(item.offer);
-  // });
-  return totalPrice;
-};
+// const getTotalprice = (events) => {
+//   let totalPrice = 0;
+//   const offerPrice = (offer) => {
+//     const sum = 0;
+//     if (!offer) {
+//       return 0;
+//     }
+//     return sum;
+//   };
+//   for (let i = 0; i < events.length; i++) {
+//     totalPrice += events[i].price;
+//     totalPrice += offerPrice(events[i].offer);
+//   }
+//   // events.forEach((item) => {
+//   //   totalPrice += item.price;
+//   //   totalPrice += offerPrice(item.offer);
+//   // });
+//   return totalPrice;
+// };
+
+const getTotalPrice = (events) => events.reduce(
+  (totalPrice, element) => totalPrice + element.price +
+  (element.offer
+    ? element.offer.reduce((sumOffer, offer) => sumOffer + offer.price, 0)
+    : 0), 0);
+
 
 const getRoute = (events) => {
   let copyEvents = events.slice();
@@ -66,4 +70,4 @@ const getDate = (events) => {
 };
 
 
-export {getDateFormat, getDateDif, render, getTotalprice, getRoute, getDate};
+export {getDateFormat, getDateDif, render, getTotalPrice, getRoute, getDate};

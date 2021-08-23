@@ -1,3 +1,5 @@
+import { getTotalprice, getRoute, getDate } from "../utils/utils";
+
 const createTripInfo = () => (
   `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
@@ -5,14 +7,15 @@ const createTripInfo = () => (
 </section>`
 );
 
-const createTripInfoRoute = () => '<h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>';
+const createTripInfoRouteDate = (events) => (
+  `<h1 class="trip-info__title">${getRoute(events)}</h1>
+  <p class="trip-info__dates">${getDate(events)}</p>`
+);
 
-const createTripInfoDate = () => '<p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>';
-
-const createTripInfoPrice = () => (
+const createTripInfoPrice = (events) => (
   `<p class="trip-info__cost">
-  Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+  Total: &euro;&nbsp;<span class="trip-info__cost-value">${getTotalprice(events)}</span>
 </p>`
 );
 
-export {createTripInfo, createTripInfoRoute, createTripInfoDate, createTripInfoPrice};
+export {createTripInfo, createTripInfoRouteDate, createTripInfoPrice};

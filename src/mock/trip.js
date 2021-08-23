@@ -7,7 +7,7 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const offer = [
+const offerEvents = [
   {
     type: 'taxi',
     offers: [
@@ -42,7 +42,7 @@ const offer = [
 
 const generateOffer = (typeIn) => {
   let ArrayOffer;
-  offer.forEach((element) => {
+  offerEvents.forEach((element) => {
     if (element.type === typeIn) {
       ArrayOffer = element.offers.slice(getRandomInteger(0, element.offers.length - 1));
     }
@@ -70,42 +70,56 @@ const generateDescription = () => {
   return description.slice(randomIndex,  randomIndex + getRandomInteger(4)).join(' ');
 };
 
-const generateType = () => {
-  const type = [
-    'taxi',
-    'bus',
-    'train',
-    'ship',
-    'drive',
-    'flight',
-    'check-in',
-    'sightseeing',
-    'restaurant',
-  ];
+const generatePhotos = () => new Array(getRandomInteger(0, 4)).fill().map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
 
-  const randomIndex = getRandomInteger(0, type.length - 1);
-
-  return type[randomIndex];
-};
-
-const generatePlace = () => {
-  const place = [
+const createDestination = () => {
+  const places = [
     'Amsterdam',
     'Chamonix',
     'Geneva',
     'China',
   ];
-  return place[getRandomInteger(0, place.length - 1)];
+
+  const destinationArray =[];
+  for(const place of places){
+    destinationArray.push({
+      description: generateDescription(),
+      place: place,
+      photos: generatePhotos(),
+    });
+  }
+  return destinationArray;
 };
 
-const generatePhotos = () => new Array(getRandomInteger(0, 5)).fill().map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
+const destination = createDestination();
+// console.log(destination);
+
+const typeEvent = [
+  'taxi',
+  'bus',
+  'train',
+  'ship',
+  'drive',
+  'flight',
+  'check-in',
+  'sightseeing',
+  'restaurant',
+];
+
+const generateType = () => {
+
+  const randomIndex = getRandomInteger(0, typeEvent.length - 1);
+
+  return typeEvent[randomIndex];
+};
+
 
 const generateDate = () => {
   const timeAdd = 1 + Math.floor(Math.random() * 7) * 24 * getRandomInteger(0, 60) * 60 * 1000;
   return dayjs().add(timeAdd, 'ms').toDate();
 };
 
-export const generateEvent = () => {
+const generateEvent = () => {
   const dateStart = generateDate();
   const dateEnd = generateDate();
   const type = generateType();
@@ -114,11 +128,7 @@ export const generateEvent = () => {
     type: type,
     offer: generateOffer(type),
     isFavorite: getRandomInteger(0,1) === 1,
-    destination: {
-      description: generateDescription(),
-      place: generatePlace(),
-      photos: generatePhotos(),
-    },
+    destination: destination[getRandomInteger(0, destination.length - 1)],
     price: getRandomInteger(1200),
     date: {
       from: Math.min(dateStart, dateEnd),
@@ -126,3 +136,5 @@ export const generateEvent = () => {
     },
   };
 };
+
+export {offerEvents, generateEvent, destination, typeEvent};

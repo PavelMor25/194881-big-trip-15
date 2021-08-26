@@ -1,8 +1,31 @@
 import dayjs from 'dayjs';
 
-const getDateFormat = (date, format) => dayjs(date).format(format);
+export const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+};
 
-const getDateDif = (dateFrom, dateTo) => {
+export const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement('div');
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+export const getDateFormat = (date, format) => dayjs(date).format(format);
+
+export const getDateDif = (dateFrom, dateTo) => {
   const dateStart = dayjs(Math.min(dateFrom, dateTo));
   const dateEnd = dayjs(Math.max(dateFrom, dateTo));
   const difDay = dateEnd.diff(dateStart, 'd') > 10 ? dateEnd.diff(dateStart, 'd') : `0${dateEnd.diff(dateStart, 'd')}`;
@@ -15,36 +38,14 @@ const getDateDif = (dateFrom, dateTo) => {
   }
 };
 
-const render = (container, template, place) => container.insertAdjacentHTML(place, template);
-
-// const getTotalprice = (events) => {
-//   let totalPrice = 0;
-//   const offerPrice = (offer) => {
-//     const sum = 0;
-//     if (!offer) {
-//       return 0;
-//     }
-//     return sum;
-//   };
-//   for (let i = 0; i < events.length; i++) {
-//     totalPrice += events[i].price;
-//     totalPrice += offerPrice(events[i].offer);
-//   }
-//   // events.forEach((item) => {
-//   //   totalPrice += item.price;
-//   //   totalPrice += offerPrice(item.offer);
-//   // });
-//   return totalPrice;
-// };
-
-const getTotalPrice = (events) => events.reduce(
+export const getTotalPrice = (events) => events.reduce(
   (totalPrice, element) => totalPrice + element.price +
   (element.offer
     ? element.offer.reduce((sumOffer, offer) => sumOffer + offer.price, 0)
     : 0), 0);
 
 
-const getRoute = (events) => {
+export const getRoute = (events) => {
   let copyEvents = events.slice();
   copyEvents = copyEvents.sort((a, b) => a.date.from - b.date.from);
   const route = [copyEvents[0].destination.place];
@@ -60,7 +61,7 @@ const getRoute = (events) => {
 };
 
 
-const getDate = (events) => {
+export const getDate = (events) => {
   let copyEvents = events.slice();
   copyEvents = copyEvents.sort((a, b) => a.date.from - b.date.from);
   return (
@@ -70,4 +71,3 @@ const getDate = (events) => {
 };
 
 
-export {getDateFormat, getDateDif, render, getTotalPrice, getRoute, getDate};

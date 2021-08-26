@@ -1,10 +1,10 @@
-import { getDateFormat, createElement } from '../utils/utils';
 import { offerEvents, destination, typeEvent} from '../mock/trip';
 
 const createPlace = () =>
   destination.map((item) =>
     `<option value="${item.place}"></option>`)
     .join('');
+
 
 const createDescription = (eventDestination) => (
   `<section class="event__section  event__section--destination">
@@ -16,6 +16,19 @@ const createDescription = (eventDestination) => (
     }
   }).description}
   </p>
+
+  <div class="event__photos-container">
+    <div class="event__photos-tape">
+    ${destination
+    .find((element) => {
+      if (element.place === eventDestination) {
+        return 1;
+      }
+    })
+    .photos
+    .map((element) => `<img class="event__photo" src="${element}" alt="Event photo">`).join('')}
+    </div>
+  </div>
 </section>`
 );
 
@@ -59,8 +72,9 @@ const createOffersTemplate = (currentType, offers) => (
 </section>`
 );
 
-const createEditPointTemplate = (events) => {
-  const {destination: {place}, type, offer, date: {from, to}, price} = events;
+
+const createNewPoint = (events) => {
+  const {destination: {place}, type, offer} = events;
   const places = createPlace();
   const description = place ? createDescription(place) : '';
   const typeList = createTypeItemsTemplate(type);
@@ -97,10 +111,10 @@ const createEditPointTemplate = (events) => {
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateFormat(from, 'DD/MM/YY HH:mm')}">
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="19/03/19 00:00">
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateFormat(to, 'DD/MM/YY HH:mm')}">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="19/03/19 00:00">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -108,7 +122,7 @@ const createEditPointTemplate = (events) => {
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -124,25 +138,4 @@ const createEditPointTemplate = (events) => {
   );
 };
 
-export default class TripPointEdit {
-  constructor(events) {
-    this._events = events,
-    this._element = null;
-  }
-
-  getTemplate() {
-    return createEditPointTemplate(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-}
+export {createNewPoint};

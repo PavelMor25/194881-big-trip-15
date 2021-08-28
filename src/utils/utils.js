@@ -46,6 +46,9 @@ export const getTotalPrice = (events) => events.reduce(
 
 
 export const getRoute = (events) => {
+  if (!events.length) {
+    return '';
+  }
   let copyEvents = events.slice();
   copyEvents = copyEvents.sort((a, b) => a.date.from - b.date.from);
   const route = [copyEvents[0].destination.place];
@@ -62,6 +65,9 @@ export const getRoute = (events) => {
 
 
 export const getDate = (events) => {
+  if (!events.length) {
+    return '';
+  }
   let copyEvents = events.slice();
   copyEvents = copyEvents.sort((a, b) => a.date.from - b.date.from);
   return (

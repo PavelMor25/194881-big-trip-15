@@ -1,4 +1,5 @@
-import { getDateFormat, getDateDif, createElement} from '../utils/utils';
+import { getDateFormat, getDateDif} from '../utils/trip-and-info';
+import AbstractView from './abstract';
 
 const createOffersList = (offers) => (
   offers.map((element) => (
@@ -49,25 +50,25 @@ const createTravelListItem = (events) => {
 </li>`;
 };
 
-export default class TripEvent {
+export default class TripEvent extends AbstractView {
   constructor(events) {
-    this._events = events,
-    this._element = null;
+    super();
+    this._events = events;
+
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createTravelListItem(this._events);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._clickHandler);
   }
 }

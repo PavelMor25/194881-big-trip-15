@@ -1,4 +1,5 @@
-import { getTotalPrice, getRoute, getDate, createElement} from '../utils/utils';
+import { getTotalPrice, getRoute, getDate} from '../utils/trip-and-info';
+import AbstractView from './abstract';
 
 const createTripInfoRouteDate = (events) => (
   `<h1 class="trip-info__title">${getRoute(events)}</h1>
@@ -20,25 +21,13 @@ const createTripInfo = (events) => (
 </section>`
 );
 
-export default class TripInfo {
+export default class TripInfo extends AbstractView  {
   constructor(events) {
-    this._events = events,
-    this._element = null;
+    super();
+    this._events = events;
   }
 
   getTemplate() {
     return createTripInfo(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

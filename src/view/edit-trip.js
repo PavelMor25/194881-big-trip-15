@@ -1,5 +1,6 @@
-import { getDateFormat, createElement } from '../utils/utils';
+import { getDateFormat} from '../utils/utils';
 import { offerEvents, destination, typeEvent} from '../mock/trip';
+import AbstractView from './abstract';
 
 const createPlace = () =>
   destination.map((item) =>
@@ -67,7 +68,8 @@ const createEditPointTemplate = (events) => {
   const offerList = (offerEvents.find((element) => element.type === type ? 1 : 0)) ? createOffersTemplate(type, offer) : '';
 
 
-  return (`<form class="event event--edit" action="#" method="post">
+  return (`<li class="trip-events__item">
+  <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
       <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -123,29 +125,18 @@ const createEditPointTemplate = (events) => {
       ${description}
       </section>`
       : ''}
-  </form>`
+  </form>
+  </li>`
   );
 };
 
-export default class TripPointEdit {
+export default class TripPointEdit extends AbstractView {
   constructor(events) {
-    this._events = events,
-    this._element = null;
+    super();
+    this._events = events;
   }
 
   getTemplate() {
     return createEditPointTemplate(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

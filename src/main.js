@@ -7,7 +7,7 @@ import TripEventsView from './view/trip';
 import TripPointEditView from './view/edit-trip';
 import EmptyListView from './view/empty-events';
 import Abstract from './view/abstract';
-import {generateEvent} from './mock/trip';
+import {generateEvent} from './mock/trip-mock';
 import { render, RenderPosition, replace} from './utils/render';
 
 const EVENTS_COUNT = 10;
@@ -50,11 +50,11 @@ const renderEvent = (eventListElement, event) => {
     document.addEventListener('keydown', onEscKeyDown);
   };
 
-  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', replaceCardToFormEvent);
+  eventComponent.setClickHandler(replaceCardToFormEvent);
 
-  eventEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', replaceFormToCardEvent);
+  eventEditComponent.setClickHandler(replaceFormToCardEvent);
 
-  eventEditComponent.getElement().addEventListener('submit', replaceFormToCardEvent);
+  eventEditComponent.setFormSubmitHandler(replaceFormToCardEvent);
 
   render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };

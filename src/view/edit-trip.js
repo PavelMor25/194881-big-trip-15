@@ -1,5 +1,5 @@
 import { getDateFormat} from '../utils/trip-and-info';
-import { offerEvents, destination, typeEvent} from '../mock/trip';
+import { offerEvents, destination, typeEvent} from '../mock/trip-mock';
 import AbstractView from './abstract';
 
 const createPlace = () =>
@@ -134,9 +134,32 @@ export default class TripPointEdit extends AbstractView {
   constructor(events) {
     super();
     this._events = events;
+
+    this._clickHandler = this._clickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createEditPointTemplate(this._events);
+  }
+
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
+  }
+
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._clickHandler);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._clickHandler);
   }
 }

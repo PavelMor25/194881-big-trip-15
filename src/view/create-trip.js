@@ -1,4 +1,4 @@
-import { offerEvents, destination, typeEvent} from '../mock/trip';
+import { offerEvents, destination, typeEvent} from '../mock/trip-mock';
 
 const createPlace = () =>
   destination.map((item) =>

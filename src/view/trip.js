@@ -1,4 +1,4 @@
-import { getDateFormat, getDateDif} from '../utils/utils';
+import { getDateFormat, getDateDif} from '../utils/trip-and-info';
 import AbstractView from './abstract';
 
 const createOffersList = (offers) => (

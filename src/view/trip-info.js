@@ -1,4 +1,4 @@
-import { getTotalPrice, getRoute, getDate} from '../utils/utils';
+import { getTotalPrice, getRoute, getDate} from '../utils/trip-and-info';
 import AbstractView from './abstract';
 
 const createTripInfoRouteDate = (events) => (

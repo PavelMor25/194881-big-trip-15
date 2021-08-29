@@ -6,8 +6,9 @@ import TripListView from './view/trip-list';
 import TripEventsView from './view/trip';
 import TripPointEditView from './view/edit-trip';
 import EmptyListView from './view/empty-events';
+import Abstract from './view/abstract';
 import {generateEvent} from './mock/trip';
-import { render, RenderPosition} from './utils/utils';
+import { render, RenderPosition, replace} from './utils/render';
 
 const EVENTS_COUNT = 10;
 const events = new Array(EVENTS_COUNT)
@@ -16,15 +17,19 @@ const events = new Array(EVENTS_COUNT)
   .sort((a, b) => a.date.from - b.date.from);
 
 const renderEvent = (eventListElement, event) => {
+  if (eventListElement instanceof Abstract) {
+    eventListElement = eventListElement.getElement();
+  }
+
   const eventComponent = new TripEventsView(event);
   const eventEditComponent = new TripPointEditView(event);
 
   const replaceCardToForm = () => {
-    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
   };
 
   const replaceFormToCard = () => {
-    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventComponent, eventEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -34,8 +39,6 @@ const renderEvent = (eventListElement, event) => {
       document.removeEventListener('keydown', onEscKeyDown);
     }
   };
-
-  eventComponent.getElement().querySelector('.event__rollup-btn');
 
   const replaceFormToCardEvent = () => {
     replaceFormToCard();
@@ -53,36 +56,36 @@ const renderEvent = (eventListElement, event) => {
 
   eventEditComponent.getElement().addEventListener('submit', replaceFormToCardEvent);
 
-  render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
 
 const renderTripList = (tripListContainer, event) => {
   if (!events.length) {
-    return render(tripListContainer, new EmptyListView().getElement(), RenderPosition.BEFOREEND);
+    return render(tripListContainer, new EmptyListView(), RenderPosition.BEFOREEND);
   }
 
   const tripSortComponent = new TripSortView();
-  render(tripListContainer, tripSortComponent.getElement(), RenderPosition.BEFOREEND);
+  render(tripListContainer, tripSortComponent, RenderPosition.BEFOREEND);
 
   const tripListComponent = new TripListView();
-  render(tripListContainer, tripListComponent.getElement(), RenderPosition.BEFOREEND);
+  render(tripListContainer, tripListComponent, RenderPosition.BEFOREEND);
 
   for (let i = 0; i < EVENTS_COUNT; i++) {
-    renderEvent(tripListComponent.getElement(), event[i]);
+    renderEvent(tripListComponent, event[i]);
   }
 };
 
 const tripMain = document.querySelector('.trip-main');
 
-render(tripMain, new TripInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
+render(tripMain, new TripInfoView(events), RenderPosition.AFTERBEGIN);
 
 const tripNavigation = tripMain.querySelector('.trip-controls__navigation');
 
-render(tripNavigation, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
+render(tripNavigation, new SiteMenuView(), RenderPosition.BEFOREEND);
 
 const tripFilters = tripMain.querySelector('.trip-controls__filters');
 
-render(tripFilters, new FilterView().getElement(), RenderPosition.BEFOREEND);
+render(tripFilters, new FilterView(), RenderPosition.BEFOREEND);
 
 const tripEvents = document.querySelector('.trip-events');
 

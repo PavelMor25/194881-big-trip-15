@@ -1,4 +1,4 @@
-import { getDateFormat} from '../utils/utils';
+import { getDateFormat} from '../utils/trip-and-info';
 import { offerEvents, destination, typeEvent} from '../mock/trip';
 import AbstractView from './abstract';
 

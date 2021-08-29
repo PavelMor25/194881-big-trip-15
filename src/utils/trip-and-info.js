@@ -1,28 +1,5 @@
 import dayjs from 'dayjs';
 
-export const RenderPosition = {
-  AFTERBEGIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-};
-
-export const render = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-  }
-};
-
-export const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
 export const getDateFormat = (date, format) => dayjs(date).format(format);
 
 export const getDateDif = (dateFrom, dateTo) => {
@@ -44,7 +21,6 @@ export const getTotalPrice = (events) => events.reduce(
     ? element.offer.reduce((sumOffer, offer) => sumOffer + offer.price, 0)
     : 0), 0);
 
-
 export const getRoute = (events) => {
   if (!events.length) {
     return '';
@@ -63,7 +39,6 @@ export const getRoute = (events) => {
   return route.length < 3 ? route.join('  &mdash; ') : `${route[0]} &mdash; ... &mdash; ${route[route.length - 1]}`;
 };
 
-
 export const getDate = (events) => {
   if (!events.length) {
     return '';
@@ -75,5 +50,3 @@ export const getDate = (events) => {
       ? `${getDateFormat(copyEvents[0].date.from, 'MMM DD')} &mdash; ${getDateFormat(copyEvents[copyEvents.length - 1].date.to, 'DD')}`
       : `${getDateFormat(copyEvents[0].date.from, 'MMM DD')} &mdash; ${getDateFormat(copyEvents[copyEvents.length - 1].date.to, 'MMM DD')}`);
 };
-
-

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common';
 
 const offerEvents = [
@@ -118,6 +119,7 @@ const generateEvent = () => {
   const type = generateType();
 
   return {
+    id: nanoid(),
     type: type,
     offer: generateOffer(type),
     isFavorite: getRandomInteger(0,1) === 1,

@@ -1,79 +1,14 @@
 import SiteMenuView from './view/site-menu';
 import FilterView from './view/filter';
 import TripInfoView from './view/trip-info';
-import TripSortView from './view/trip-sort';
-import TripListView from './view/trip-list';
-import TripEventsView from './view/trip';
-import TripPointEditView from './view/edit-trip';
-import EmptyListView from './view/empty-events';
-import Abstract from './view/abstract';
+import Trip from './presenter/trip';
 import {generateEvent} from './mock/trip-mock';
-import { render, RenderPosition, replace} from './utils/render';
+import { render, RenderPosition} from './utils/render';
 
 const EVENTS_COUNT = 10;
 const events = new Array(EVENTS_COUNT)
   .fill()
-  .map(() => generateEvent())
-  .sort((a, b) => a.date.from - b.date.from);
-
-const renderEvent = (eventListElement, event) => {
-  if (eventListElement instanceof Abstract) {
-    eventListElement = eventListElement.getElement();
-  }
-
-  const eventComponent = new TripEventsView(event);
-  const eventEditComponent = new TripPointEditView(event);
-
-  const replaceCardToForm = () => {
-    replace(eventEditComponent, eventComponent);
-  };
-
-  const replaceFormToCard = () => {
-    replace(eventComponent, eventEditComponent);
-  };
-
-  const onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    }
-  };
-
-  const replaceFormToCardEvent = () => {
-    replaceFormToCard();
-    document.removeEventListener('keydown', onEscKeyDown);
-  };
-
-  const replaceCardToFormEvent = () => {
-    replaceCardToForm();
-    document.addEventListener('keydown', onEscKeyDown);
-  };
-
-  eventComponent.setClickHandler(replaceCardToFormEvent);
-
-  eventEditComponent.setClickHandler(replaceFormToCardEvent);
-
-  eventEditComponent.setFormSubmitHandler(replaceFormToCardEvent);
-
-  render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
-};
-
-const renderTripList = (tripListContainer, event) => {
-  if (!events.length) {
-    return render(tripListContainer, new EmptyListView(), RenderPosition.BEFOREEND);
-  }
-
-  const tripSortComponent = new TripSortView();
-  render(tripListContainer, tripSortComponent, RenderPosition.BEFOREEND);
-
-  const tripListComponent = new TripListView();
-  render(tripListContainer, tripListComponent, RenderPosition.BEFOREEND);
-
-  for (let i = 0; i < EVENTS_COUNT; i++) {
-    renderEvent(tripListComponent, event[i]);
-  }
-};
+  .map(() => generateEvent());
 
 const tripMain = document.querySelector('.trip-main');
 
@@ -89,4 +24,6 @@ render(tripFilters, new FilterView(), RenderPosition.BEFOREEND);
 
 const tripEvents = document.querySelector('.trip-events');
 
-renderTripList(tripEvents, events);
+const tripComponent = new Trip(tripEvents);
+
+tripComponent.init(events);

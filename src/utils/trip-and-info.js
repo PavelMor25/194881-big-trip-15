@@ -50,3 +50,9 @@ export const getDate = (events) => {
       ? `${getDateFormat(copyEvents[0].date.from, 'MMM DD')} &mdash; ${getDateFormat(copyEvents[copyEvents.length - 1].date.to, 'DD')}`
       : `${getDateFormat(copyEvents[0].date.from, 'MMM DD')} &mdash; ${getDateFormat(copyEvents[copyEvents.length - 1].date.to, 'MMM DD')}`);
 };
+
+export const sortDay = (dayA, dayB) => dayA.date.from - dayB.date.from;
+
+export const sortTime = (timeA, timeB) =>(timeB.date.to - timeB.date.from) - (timeA.date.to - timeA.date.from);
+
+export const sortPrice = (priceA, priceB) => priceB.price - priceA.price;

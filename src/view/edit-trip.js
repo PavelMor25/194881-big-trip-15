@@ -1,22 +1,34 @@
-import { getDateFormat} from '../utils/trip-and-info';
-import { offerEvents, destination, typeEvent} from '../mock/trip-mock';
+import { getDateFormat, isOfferList} from '../utils/trip-and-info';
+import { offerEvents, destinationList, typeEvent} from '../mock/trip-mock';
 import AbstractView from './abstract';
 
 const createPlace = () =>
-  destination.map((item) =>
-    `<option value="${item.place}"></option>`)
+  destinationList.map((item, index) => destinationList[index] ? `<option value="${item.place}"></option>` : '')
     .join('');
 
 const createDescription = (eventDestination) => (
   `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
   <p class="event__destination-description">
-  ${destination.find((element) => {
-    if (element.place === eventDestination) {
+  ${destinationList.find((element) => {
+    if (element && element.place === eventDestination) {
       return 1;
     }
   }).description}
   </p>
+
+  <div class="event__photos-container">
+    <div class="event__photos-tape">
+    ${destinationList
+    .find((element) => {
+      if (element && element.place === eventDestination) {
+        return 1;
+      }
+    })
+    .photos
+    .map((element) => `<img class="event__photo" src="${element}" alt="Event photo">`).join('')}
+    </div>
+  </div>
 </section>`
 );
 
@@ -61,12 +73,12 @@ const createOffersTemplate = (currentType, offers) => (
 );
 
 const createEditPointTemplate = (events) => {
-  const {destination: {place}, type, offer, date: {from, to}, price} = events;
+  const {destination, type, offer, date: {from, to}, price} = events;
   const places = createPlace();
-  const description = place ? createDescription(place) : '';
+  const destinationPlace = destination ? destination.place : '';
+  const description = destination ? createDescription(destination.place) : '';
   const typeList = createTypeItemsTemplate(type);
-  const offerList = (offerEvents.find((element) => element.type === type ? 1 : 0)) ? createOffersTemplate(type, offer) : '';
-
+  const offerList = isOfferList(type) ? createOffersTemplate(type, offer) : '';
 
   return (`<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -91,7 +103,7 @@ const createEditPointTemplate = (events) => {
       <label class="event__label  event__type-output" for="event-destination-1">
         ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationPlace}" list="destination-list-1">
       <datalist id="destination-list-1">
         ${places}
       </datalist>

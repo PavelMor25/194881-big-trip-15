@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { offerEvents } from '../mock/trip-mock';
 
 export const getDateFormat = (date, format) => dayjs(date).format(format);
 
@@ -27,12 +28,15 @@ export const getRoute = (events) => {
   }
   let copyEvents = events.slice();
   copyEvents = copyEvents.sort((a, b) => a.date.from - b.date.from);
-  const route = [copyEvents[0].destination.place];
-  let currentPlace = copyEvents[0].destination.place;
-  for (let i = 1; i < copyEvents.length; i++) {
-    if (!(currentPlace === copyEvents[i].destination.place)) {
-      route.push(copyEvents[i].destination.place);
-      currentPlace = copyEvents[i].destination.place;
+  const route = [copyEvents.find((element) => element.destination).destination.place];
+  let currentPlace = route[0];
+  for (const copyPlace of copyEvents) {
+    if (!copyPlace) {
+      continue;
+    }
+    if (copyPlace.destination && !( currentPlace === copyPlace.destination.place )) {
+      route.push(copyPlace.destination.place);
+      currentPlace = copyPlace.destination.place;
     }
   }
 
@@ -56,3 +60,5 @@ export const sortDay = (dayA, dayB) => dayA.date.from - dayB.date.from;
 export const sortTime = (timeA, timeB) =>(timeB.date.to - timeB.date.from) - (timeA.date.to - timeA.date.from);
 
 export const sortPrice = (priceA, priceB) => priceB.price - priceA.price;
+
+export const isOfferList = (element) => offerEvents.some((offerVal) => offerVal.type === element);

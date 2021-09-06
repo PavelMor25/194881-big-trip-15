@@ -12,6 +12,7 @@ const createOffersList = (offers) => (
 
 const createTravelListItem = (events) => {
   const {date, type, offer, isFavorite, destination, price} = events;
+  const destinationPlace = destination ? destination.place : '';
   const offersList = offer ? createOffersList(offer) : '';
   const favoriteClassActive = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -21,7 +22,7 @@ const createTravelListItem = (events) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${type} ${destination.place}</h3>
+    <h3 class="event__title">${type} ${destinationPlace}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="2019-03-18T12:25">${getDateFormat(date.from, 'HH:mm')}</time>

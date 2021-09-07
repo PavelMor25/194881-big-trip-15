@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common';
 
-const offerEvents = [
+export const offerEvents = [
   {
     type: 'taxi',
     offers: [
@@ -73,10 +73,15 @@ const createDestination = () => {
     'Chamonix',
     'Geneva',
     'China',
+    null,
   ];
 
   const destinationArray =[];
   for(const place of places){
+    if (!place) {
+      destinationArray.push(place);
+      continue;
+    }
     destinationArray.push({
       description: generateDescription(),
       place: place,
@@ -86,9 +91,9 @@ const createDestination = () => {
   return destinationArray;
 };
 
-const destination = createDestination();
+export const destinationList = createDestination();
 
-const typeEvent = [
+export const typeEvent = [
   'taxi',
   'bus',
   'train',
@@ -113,7 +118,7 @@ const generateDate = () => {
   return dayjs().add(timeAdd, 'ms').toDate();
 };
 
-const generateEvent = () => {
+export const generateEvent = () => {
   const dateStart = generateDate();
   const dateEnd = generateDate();
   const type = generateType();
@@ -123,7 +128,7 @@ const generateEvent = () => {
     type: type,
     offer: generateOffer(type),
     isFavorite: getRandomInteger(0,1) === 1,
-    destination: destination[getRandomInteger(0, destination.length - 1)],
+    destination: destinationList[getRandomInteger(0, destinationList.length - 1)],
     price: getRandomInteger(1200),
     date: {
       from: Math.min(dateStart, dateEnd),
@@ -132,4 +137,3 @@ const generateEvent = () => {
   };
 };
 
-export {offerEvents, generateEvent, destination, typeEvent};

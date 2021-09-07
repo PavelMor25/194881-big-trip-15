@@ -1,22 +1,37 @@
-import { getDateFormat} from '../utils/trip-and-info';
-import { offerEvents, destination, typeEvent} from '../mock/trip-mock';
-import AbstractView from './abstract';
+import { getDateFormat, isOfferList, getOffers, getDestination} from '../utils/trip-and-info';
+import { offerEvents, destinationList, typeEvent} from '../mock/trip-mock';
+import SmartView from './smart';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createPlace = () =>
-  destination.map((item) =>
-    `<option value="${item.place}"></option>`)
+  destinationList.map((item, index) => destinationList[index] ? `<option value="${item.place}"></option>` : '')
     .join('');
 
 const createDescription = (eventDestination) => (
   `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
   <p class="event__destination-description">
-  ${destination.find((element) => {
-    if (element.place === eventDestination) {
+  ${destinationList.find((element) => {
+    if (element && element.place === eventDestination) {
       return 1;
     }
   }).description}
   </p>
+
+  <div class="event__photos-container">
+    <div class="event__photos-tape">
+    ${destinationList
+    .find((element) => {
+      if (element && element.place === eventDestination) {
+        return 1;
+      }
+    })
+    .photos
+    .map((element) => `<img class="event__photo" src="${element}" alt="Event photo">`).join('')}
+    </div>
+  </div>
 </section>`
 );
 
@@ -31,7 +46,8 @@ const createTypeItemsTemplate = (currentType) => (
     value="${element}"
     ${element === currentType ? 'checked' : ''}>
     <label class="event__type-label  event__type-label--${element}"
-    for="event-type-${element}-1">${element}</label>
+    for="event-type-${element}-1"
+    data-type="${element}">${element}</label>
     </div>`)
     .join('')
 );
@@ -49,9 +65,11 @@ const createOffersTemplate = (currentType, offers) => (
       id="event-offer-${element.title.replaceAll(' ', '-')}-1"
       type="checkbox"
       name="event-offer-${element.title.replaceAll(' ', '-')}"
-      ${offers.includes(element) ? 'checked' : ''}>
-      <label class="event__offer-label" for="event-offer-${element.title.replaceAll(' ', '-')}-1">
-        <span class="event__offer-title">${element.title}</span>
+      ${offers.some((offer) => offer === element) ? 'checked' : ''}>
+      <label class="event__offer-label"
+       for="event-offer-${element.title.replaceAll(' ', '-')}-1"
+       data-offer="${element.title}">
+        <span class="event__offer-title" data-offer="${element.title}">${element.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${element.price}</span>
       </label>
@@ -60,13 +78,13 @@ const createOffersTemplate = (currentType, offers) => (
 </section>`
 );
 
-const createEditPointTemplate = (events) => {
-  const {destination: {place}, type, offer, date: {from, to}, price} = events;
+const createEditPointTemplate = (data) => {
+  const {destination, type, offer, date: {from, to}, price, isPlace, isOffer} = data;
   const places = createPlace();
-  const description = place ? createDescription(place) : '';
+  const destinationPlace = destination ? destination.place : '';
+  const description = isPlace ? createDescription(destination.place) : '';
   const typeList = createTypeItemsTemplate(type);
-  const offerList = (offerEvents.find((element) => element.type === type ? 1 : 0)) ? createOffersTemplate(type, offer) : '';
-
+  const offerList = isOffer ? createOffersTemplate(type, offer) : '';
 
   return (`<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -91,7 +109,7 @@ const createEditPointTemplate = (events) => {
       <label class="event__label  event__type-output" for="event-destination-1">
         ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationPlace}" list="destination-list-1">
       <datalist id="destination-list-1">
         ${places}
       </datalist>
@@ -130,17 +148,102 @@ const createEditPointTemplate = (events) => {
   );
 };
 
-export default class TripPointEdit extends AbstractView {
+export default class TripPointEdit extends SmartView {
   constructor(events) {
     super();
-    this._events = events;
+    this._data = TripPointEdit.parsePointToData(events);
+    this._datepicker = null;
 
     this._clickHandler = this._clickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._changeTypeHandler = this._changeTypeHandler.bind(this);
+    this._clickOfferHandler = this._clickOfferHandler.bind(this);
+    this._changePriceHandler = this._changePriceHandler.bind(this);
+    this._changePlaceHandler = this._changePlaceHandler.bind(this);
+    this._dateChangeHandler = this._dateChangeHandler.bind(this);
+
+    this._setInnerHandlers();
+    this._setDatePicker();
   }
 
   getTemplate() {
-    return createEditPointTemplate(this._events);
+    return createEditPointTemplate(this._data);
+  }
+
+  _changeTypeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      type: evt.target.dataset.type,
+      isOffer: isOfferList(evt.target.dataset.type),
+      offer: getOffers(evt.target.dataset.type),
+    });
+  }
+
+  _clickOfferHandler(evt) {
+    if (evt.target.tagName !== 'LABEL' && evt.target.tagName !== 'SPAN') {
+      return;
+    }
+
+    if (this._data.offer.includes(getOffers(this._data.type, evt.target.dataset.offer))) {
+      this.updateData({
+        offer: this._data.offer.filter((offer) => offer !== getOffers(this._data.type, evt.target.dataset.offer)),
+      }, true);
+      return;
+    }
+
+    if (!this._data.offer.some((offer) => offer === getOffers(this._data.type, evt.target.dataset.offer))) {
+      this.updateData({
+        offer: this._data.offer.concat(getOffers(this._data.type, evt.target.dataset.offer)),
+      }, true);
+    }
+  }
+
+  _changePriceHandler(evt) {
+    this.updateData({
+      price: evt.target.value,
+    }, true);
+  }
+
+  _changePlaceHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      destination: getDestination(evt.target.value),
+      isPlace: getDestination(evt.target.value) !== null,
+    });
+  }
+
+  _setDatePicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    this._datepicker = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        mode: 'range',
+        minDate: 'today',
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        onChange: this._dateChangeHandler,
+      },
+    );
+  }
+
+  _dateChangeHandler(userDate) {
+    this.updateData({
+      date: {
+        from: userDate[0],
+        to: userDate[1],
+      },
+    });
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setClickHandler(this._callback.click);
+    this._setDatePicker();
   }
 
   _clickHandler(evt) {
@@ -155,11 +258,65 @@ export default class TripPointEdit extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._events);
+    this._callback.formSubmit(TripPointEdit.parseDataToPoint(this._data));
   }
 
   setFormSubmitHandler(callback) {
-    this._callback.click = callback;
-    this.getElement().querySelector('form').addEventListener('submit', this._clickHandler);
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.event__type-group')
+      .addEventListener('click', this._changeTypeHandler);
+
+    if (this._data.isOffer) {
+      this.getElement()
+        .querySelector('.event__available-offers')
+        .addEventListener('click', this._clickOfferHandler);
+    }
+
+    this.getElement()
+      .querySelector('#event-price-1')
+      .addEventListener('input', this._changePriceHandler);
+
+    this.getElement()
+      .querySelector('#event-destination-1')
+      .addEventListener('change', this._changePlaceHandler);
+  }
+
+  reset(event) {
+    this.updateData(
+      TripPointEdit.parsePointToData(event),
+    );
+  }
+
+  static parsePointToData(event) {
+    return Object.assign(
+      {},
+      event,
+      {
+        isPlace: event.destination !== null,
+        isOffer: isOfferList(event.type),
+      },
+    );
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    if (!data.isPlace) {
+      data.destination = null;
+    }
+
+    if (!data.isOffer) {
+      data.offer = null;
+    }
+
+    delete data.isPlace;
+    delete data.isOffer;
+
+    return data;
   }
 }

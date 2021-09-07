@@ -1,6 +1,9 @@
 import { getDateFormat, isOfferList, getOffers, getDestination} from '../utils/trip-and-info';
 import { offerEvents, destinationList, typeEvent} from '../mock/trip-mock';
 import SmartView from './smart';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createPlace = () =>
   destinationList.map((item, index) => destinationList[index] ? `<option value="${item.place}"></option>` : '')
@@ -149,6 +152,7 @@ export default class TripPointEdit extends SmartView {
   constructor(events) {
     super();
     this._data = TripPointEdit.parsePointToData(events);
+    this._datepicker = null;
 
     this._clickHandler = this._clickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -156,8 +160,10 @@ export default class TripPointEdit extends SmartView {
     this._clickOfferHandler = this._clickOfferHandler.bind(this);
     this._changePriceHandler = this._changePriceHandler.bind(this);
     this._changePlaceHandler = this._changePlaceHandler.bind(this);
+    this._dateChangeHandler = this._dateChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatePicker();
   }
 
   getTemplate() {
@@ -206,10 +212,38 @@ export default class TripPointEdit extends SmartView {
     });
   }
 
+  _setDatePicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    this._datepicker = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        mode: 'range',
+        minDate: 'today',
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        onChange: this._dateChangeHandler,
+      },
+    );
+  }
+
+  _dateChangeHandler(userDate) {
+    this.updateData({
+      date: {
+        from: userDate[0],
+        to: userDate[1],
+      },
+    });
+  }
+
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setClickHandler(this._callback.click);
+    this._setDatePicker();
   }
 
   _clickHandler(evt) {

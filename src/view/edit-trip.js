@@ -9,31 +9,26 @@ const createPlace = () =>
   destinationList.map((item, index) => destinationList[index] ? `<option value="${item.place}"></option>` : '')
     .join('');
 
-const createDescription = (eventDestination) => (
-  `<section class="event__section  event__section--destination">
-  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-  <p class="event__destination-description">
-  ${destinationList.find((element) => {
-    if (element && element.place === eventDestination) {
-      return 1;
-    }
-  }).description}
-  </p>
+const createDescription = (eventDestination) => {
+  const currentDescription = destinationList.find((element) => element.place === eventDestination);
 
-  <div class="event__photos-container">
-    <div class="event__photos-tape">
-    ${destinationList
-    .find((element) => {
-      if (element && element.place === eventDestination) {
-        return 1;
-      }
-    })
-    .photos
-    .map((element) => `<img class="event__photo" src="${element}" alt="Event photo">`).join('')}
-    </div>
-  </div>
-</section>`
-);
+  return (`<section class="event__section  event__section--destination">
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <p class="event__destination-description">
+    ${currentDescription.description}
+   </p>
+
+    ${currentDescription ?
+      `<div class="event__photos-container">
+        <div class="event__photos-tape">
+        ${currentDescription
+      .photos
+      .map((element) => `<img class="event__photo" src="${element}" alt="Event photo">`).join('')}
+        </div>
+      </div>`
+      : ''}
+  </section>`
+  );};
 
 const createTypeItemsTemplate = (currentType) => (
   typeEvent.map((element) =>

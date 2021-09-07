@@ -26,21 +26,20 @@ export const getRoute = (events) => {
   if (!events.length) {
     return '';
   }
-  let copyEvents = events.slice();
-  copyEvents = copyEvents.sort((a, b) => a.date.from - b.date.from);
-  const route = [copyEvents.find((element) => element.destination).destination.place];
-  let currentPlace = route[0];
-  for (const copyPlace of copyEvents) {
-    if (!copyPlace) {
-      continue;
+  let routeEvents = events.map((element) => element.destination !== null ? element.destination.place : '');
+  let currentPlace = routeEvents[0];
+  routeEvents = routeEvents.filter((element, index) =>{
+    if (!element){
+      return false;
     }
-    if (copyPlace.destination && !( currentPlace === copyPlace.destination.place )) {
-      route.push(copyPlace.destination.place);
-      currentPlace = copyPlace.destination.place;
+    if (element !== currentPlace || index === 0) {
+      currentPlace = element;
+      return true;
     }
-  }
+    return false;
+  });
 
-  return route.length < 3 ? route.join('  &mdash; ') : `${route[0]} &mdash; ... &mdash; ${route[route.length - 1]}`;
+  return routeEvents.length < 3 ? routeEvents.join('  &mdash; ') : `${routeEvents[0]} &mdash; ... &mdash; ${routeEvents[routeEvents.length - 1]}`;
 };
 
 export const getDate = (events) => {

@@ -4,11 +4,13 @@ import TripInfoView from './view/trip-info';
 import Trip from './presenter/trip';
 import {generateEvent} from './mock/trip-mock';
 import { render, RenderPosition} from './utils/render';
+import { sortDay } from './utils/trip-and-info';
 
 const EVENTS_COUNT = 10;
 const events = new Array(EVENTS_COUNT)
   .fill()
-  .map(() => generateEvent());
+  .map(() => generateEvent())
+  .sort(sortDay);
 
 const tripMain = document.querySelector('.trip-main');
 

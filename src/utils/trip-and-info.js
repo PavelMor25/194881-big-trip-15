@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { offerEvents } from '../mock/trip-mock';
+import { offerEvents, destinationList } from '../mock/trip-mock';
 
 export const getDateFormat = (date, format) => dayjs(date).format(format);
 
@@ -62,3 +62,16 @@ export const sortTime = (timeA, timeB) =>(timeB.date.to - timeB.date.from) - (ti
 export const sortPrice = (priceA, priceB) => priceB.price - priceA.price;
 
 export const isOfferList = (element) => offerEvents.some((offerVal) => offerVal.type === element);
+
+export const getOffers = (type, currentOffer) => {
+  const offerType = offerEvents.find((typeOffer) => typeOffer.type === type);
+
+  if (!currentOffer) {
+    return offerType ? [] : null;
+  }
+
+  return offerType.offers[offerType.offers.findIndex((offer) => offer.title === currentOffer)];
+};
+
+export const getDestination = (destination) => destination ? destinationList.find((element) => element.place === destination) : null;
+

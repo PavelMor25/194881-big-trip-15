@@ -9,31 +9,26 @@ const createPlace = () =>
   destinationList.map((item, index) => destinationList[index] ? `<option value="${item.place}"></option>` : '')
     .join('');
 
-const createDescription = (eventDestination) => (
-  `<section class="event__section  event__section--destination">
-  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-  <p class="event__destination-description">
-  ${destinationList.find((element) => {
-    if (element && element.place === eventDestination) {
-      return 1;
-    }
-  }).description}
-  </p>
+const createDescription = (eventDestination) => {
+  const currentDescription = destinationList.find((element) => element.place === eventDestination);
 
-  <div class="event__photos-container">
-    <div class="event__photos-tape">
-    ${destinationList
-    .find((element) => {
-      if (element && element.place === eventDestination) {
-        return 1;
-      }
-    })
-    .photos
-    .map((element) => `<img class="event__photo" src="${element}" alt="Event photo">`).join('')}
-    </div>
-  </div>
-</section>`
-);
+  return (`<section class="event__section  event__section--destination">
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <p class="event__destination-description">
+    ${currentDescription.description}
+   </p>
+
+    ${currentDescription ?
+      `<div class="event__photos-container">
+        <div class="event__photos-tape">
+        ${currentDescription
+      .photos
+      .map((element) => `<img class="event__photo" src="${element}" alt="Event photo">`).join('')}
+        </div>
+      </div>`
+      : ''}
+  </section>`
+  );};
 
 const createTypeItemsTemplate = (currentType) => (
   typeEvent.map((element) =>
@@ -161,6 +156,7 @@ export default class TripPointEdit extends SmartView {
     this._changePriceHandler = this._changePriceHandler.bind(this);
     this._changePlaceHandler = this._changePlaceHandler.bind(this);
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatePicker();
@@ -168,6 +164,15 @@ export default class TripPointEdit extends SmartView {
 
   getTemplate() {
     return createEditPointTemplate(this._data);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   _changeTypeHandler(evt) {
@@ -244,6 +249,17 @@ export default class TripPointEdit extends SmartView {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setClickHandler(this._callback.click);
     this._setDatePicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(TripPointEdit.parseDataToPoint(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   _clickHandler(evt) {

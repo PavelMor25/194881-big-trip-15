@@ -1,5 +1,6 @@
 import TripPointEditView from './../view/edit-trip';
 import TripEventsView from './../view/trip';
+import { UserAction, UpdateType } from '../const';
 import { remove, render, RenderPosition, replace} from './../utils/render';
 
 const Mode = {
@@ -20,6 +21,7 @@ export default class Point {
     this._handlerEditClick = this._handlerEditClick.bind(this);
     this._handlerCardClick = this._handlerCardClick.bind(this);
     this._handlerFormSubmit = this._handlerFormSubmit.bind(this);
+    this._handlerDeleteClick = this._handlerDeleteClick.bind(this);
     this._handlerFavoriteClick = this._handlerFavoriteClick.bind(this);
     this._onEscKeyHandler = this._onEscKeyHandler.bind(this);
   }
@@ -37,6 +39,7 @@ export default class Point {
     this._pointComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
     this._pointEditComponent.setClickHandler(this._handlerCardClick);
     this._pointEditComponent.setFormSubmitHandler(this._handlerFormSubmit);
+    this._pointEditComponent.setDeleteClickHandler(this._handlerDeleteClick);
 
     if (prevPointComponent === null || prevEditComponent === null) {
       render(this._eventListContainer, this._pointComponent, RenderPosition.BEFOREEND);
@@ -89,6 +92,8 @@ export default class Point {
 
   _handlerFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._point,
@@ -109,7 +114,23 @@ export default class Point {
   }
 
   _handlerFormSubmit(point) {
-    this._changeData(point);
+    const isMinorUpdate =
+      this._point.price !== point.price ||
+      this._point.date !== point.date;
+
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      point,
+    );
     this._replaceFormToCard();
+  }
+
+  _handlerDeleteClick(point) {
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   }
 }

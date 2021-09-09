@@ -156,6 +156,7 @@ export default class TripPointEdit extends SmartView {
     this._changePriceHandler = this._changePriceHandler.bind(this);
     this._changePlaceHandler = this._changePlaceHandler.bind(this);
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatePicker();
@@ -163,6 +164,15 @@ export default class TripPointEdit extends SmartView {
 
   getTemplate() {
     return createEditPointTemplate(this._data);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   _changeTypeHandler(evt) {
@@ -239,6 +249,17 @@ export default class TripPointEdit extends SmartView {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setClickHandler(this._callback.click);
     this._setDatePicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(TripPointEdit.parseDataToPoint(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   _clickHandler(evt) {

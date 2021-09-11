@@ -2,8 +2,21 @@ import { getDateFormat, isOfferList, getOffers, getDestination} from '../utils/t
 import { offerEvents, destinationList, typeEvent} from '../mock/trip-mock';
 import SmartView from './smart';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+const NEW_POINT = {
+  type: typeEvent[0],
+  offer: [],
+  isFavorite: false,
+  destination: null,
+  price: 0,
+  date: {
+    from: Date.now(),
+    to: '',
+  },
+};
 
 const createPlace = () =>
   destinationList.map((item, index) => destinationList[index] ? `<option value="${item.place}"></option>` : '')
@@ -104,7 +117,7 @@ const createEditPointTemplate = (data) => {
       <label class="event__label  event__type-output" for="event-destination-1">
         ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationPlace}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destinationPlace)}" list="destination-list-1">
       <datalist id="destination-list-1">
         ${places}
       </datalist>
@@ -123,7 +136,7 @@ const createEditPointTemplate = (data) => {
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+      <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -144,7 +157,7 @@ const createEditPointTemplate = (data) => {
 };
 
 export default class TripPointEdit extends SmartView {
-  constructor(events) {
+  constructor(events = NEW_POINT) {
     super();
     this._data = TripPointEdit.parsePointToData(events);
     this._datepickerStart = null;

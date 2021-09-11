@@ -32,6 +32,10 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
+  changeFilterDisable() {
+    this._filterComponent.changeDisableFilters();
+  }
+
   _handleModelEvent() {
     this.init();
   }

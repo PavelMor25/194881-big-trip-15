@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { offerEvents, destinationList } from '../mock/trip-mock';
+// import { offerEvents, destinationList } from '../mock/trip-mock';
 import { FilterType } from '../const';
 
 export const sortDay = (dayA, dayB) => dayA.date.from - dayB.date.from;
@@ -62,10 +62,10 @@ export const getDate = (events) => {
       : `${getDateFormat(copyEvents[0].date.from, 'MMM DD')} &mdash; ${getDateFormat(copyEvents[copyEvents.length - 1].date.to, 'MMM DD')}`);
 };
 
-export const isOfferList = (element) => offerEvents.some((offerVal) => offerVal.type === element);
+export const isOfferList = (element, offerList) => offerList.some((offerVal) => offerVal.type === element);
 
-export const getOffers = (type, currentOffer) => {
-  const offerType = offerEvents.find((typeOffer) => typeOffer.type === type);
+export const getOffers = (type, currentOffer, offerList) => {
+  const offerType = offerList.find((typeOffer) => typeOffer.type === type);
 
   if (!currentOffer) {
     return offerType ? [] : null;
@@ -74,7 +74,7 @@ export const getOffers = (type, currentOffer) => {
   return offerType.offers[offerType.offers.findIndex((offer) => offer.title === currentOffer)];
 };
 
-export const getDestination = (destination) => destination ? destinationList.find((element) => element.place === destination) : null;
+export const getDestination = (destination, destinationList) => destination ? destinationList.find((element) => element.place === destination) : null;
 
 export const filter = {
   [FilterType.EVERYTHING]: (points) => points,

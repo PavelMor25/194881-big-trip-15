@@ -8,11 +8,17 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+};
+
 export default class Point {
-  constructor(eventListContainer, changeData, changeMode) {
+  constructor(eventListContainer, changeData, changeMode, pointsModel) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._pointsModel = pointsModel;
 
     this._pointComponent = null;
     this._pointEditComponent = null;
@@ -33,7 +39,7 @@ export default class Point {
     const prevEditComponent = this._pointEditComponent;
 
     this._pointComponent = new TripEventsView(event);
-    this._pointEditComponent = new TripPointEditView(event);
+    this._pointEditComponent = new TripPointEditView(event, this._pointsModel);
 
     this._pointComponent.setClickHandler(this._handlerEditClick);
     this._pointComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
@@ -51,11 +57,45 @@ export default class Point {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._pointEditComponent, prevEditComponent);
+      replace(this._pointComponent, prevEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
     remove(prevEditComponent);
+  }
+
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._pointComponent.shake(resetFormState);
+        this._pointEditComponent.shake(resetFormState);
+        break;
+    }
   }
 
   destroy() {
@@ -116,14 +156,14 @@ export default class Point {
   _handlerFormSubmit(point) {
     const isMinorUpdate =
       this._point.price !== point.price ||
-      this._point.date !== point.date;
+      this._point.date !== point.date ||
+      this._point.offer !== point.offer;
 
     this._changeData(
       UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       point,
     );
-    this._replaceFormToCard();
   }
 
   _handlerDeleteClick(point) {

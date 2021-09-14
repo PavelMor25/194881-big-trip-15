@@ -1,3 +1,15 @@
+export const TypeEvent = [
+  'taxi',
+  'bus',
+  'train',
+  'ship',
+  'drive',
+  'flight',
+  'check-in',
+  'sightseeing',
+  'restaurant',
+];
+
 export const SortType = {
   SORT_DAY: 'sort-day',
   SORT_PRICE: 'sort-price',
@@ -12,9 +24,9 @@ export const UserAction = {
 
 export const UpdateType = {
   PATCH: 'PATCH',
-  MIDPATCH: 'MIDPATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export const FilterType = {

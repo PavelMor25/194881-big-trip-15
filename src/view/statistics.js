@@ -1,7 +1,7 @@
 import SmartView from './smart';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { makeItemsUniq, countPointsByMoney, countPointsByType, countByTime} from '../utils/statistics';
+import { makeItemsUniq, countPointsByMoney, countPointsByType, countByTime, sortUniqType} from '../utils/statistics';
 
 const BAR_HEIGHT = 55;
 
@@ -15,9 +15,9 @@ const renderMoneyChart = (moneyCtx, points) => {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqType,
+      labels: sortUniqType(uniqType,typeByMoney),
       datasets: [{
-        data: typeByMoney,
+        data: sortUniqType(uniqType, typeByMoney, false),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -88,9 +88,9 @@ const renderTypeChart = (typeCtx, points) => {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqType,
+      labels: sortUniqType(uniqType, pointsByType),
       datasets: [{
-        data: pointsByType,
+        data: sortUniqType(uniqType, pointsByType, false),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -160,9 +160,9 @@ const renderTimeChart = (timeCtx, points) => {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqType,
+      labels: sortUniqType(uniqType, typeByTime),
       datasets: [{
-        data: typeByTime,
+        data: sortUniqType(uniqType, typeByTime, false),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',

@@ -1,17 +1,40 @@
 import AbstractObserver from '../utils/abstracr-observer';
+import { UpdateType } from '../const';
 
 export default class Points extends AbstractObserver {
   constructor() {
     super();
     this._points = [];
+    this._offers = [];
+    this._destinations = [];
   }
 
   setPoints(points) {
     this._points = points.slice();
   }
 
+  setDestinations(destinations) {
+    this._destinations = destinations.slice();
+  }
+
+  setOffers(offers) {
+    this._offers = offers.slice();
+  }
+
   getPoints() {
     return this._points;
+  }
+
+  getOffers() {
+    return this._offers;
+  }
+
+  getDestinations() {
+    return this._destinations;
+  }
+
+  init() {
+    this._notify(UpdateType.INIT);
   }
 
   updatePoint(updateType, update) {
@@ -52,5 +75,84 @@ export default class Points extends AbstractObserver {
     ];
 
     this._notify(updateType);
+  }
+
+  static adaptToClient(point) {
+    const adaptedPoint = Object.assign(
+      {},
+      point,
+      {
+        offer: point.offers,
+        price: point.base_price,
+        date: {
+          from: new Date(point.date_from),
+          to: new Date(point.date_to),
+        },
+        destination: {
+          description: point.destination.description,
+          place: point.destination.name,
+          photos: point.destination.pictures,
+        },
+        isFavorite: point.is_favorite,
+      },
+    );
+
+    delete adaptedPoint.offers;
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint.destination.name;
+    delete adaptedPoint.destination.pictures;
+    delete adaptedPoint['is_favorite'];
+
+    return adaptedPoint;
+  }
+
+  static adaptToServer(point) {
+    const adaptedPoint = Object.assign(
+      {},
+      point,
+      {
+        offers: point.offer,
+        'base_price': point.price,
+        'date_from': new Date(point.date.from).toISOString(),
+        'date_to': new Date(point.date.to).toISOString(),
+        destination: point.destination ? {
+          description: point.destination.description,
+          name: point.destination.place,
+          pictures: point.destination.photos,
+        } : null,
+        'is_favorite': point.isFavorite,
+      },
+    );
+
+
+    delete adaptedPoint.price;
+    delete adaptedPoint.offer;
+    delete adaptedPoint.date;
+    if (adaptedPoint.destination) {
+      delete adaptedPoint.destination.place;
+      delete adaptedPoint.destination.photos;
+    }
+    delete adaptedPoint.isFavorite;
+
+    return adaptedPoint;
+  }
+
+  static adaptToClientDestination(destination) {
+    const adaptDestination = Object.assign(
+      {},
+      destination,
+      {
+        place: destination.name,
+        description: destination.description,
+        photos: destination.pictures,
+      },
+    );
+
+    delete adaptDestination.name;
+    delete adaptDestination.pictures;
+
+    return adaptDestination;
   }
 }

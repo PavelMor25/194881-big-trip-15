@@ -14,3 +14,7 @@ const getDifMinute = (item) => {
 
 export const countByTime = (items, type) => items.filter((point) => point.type === type).reduce((prevVal, curElem) => prevVal + getDifMinute(curElem), 0);
 
+export const sortUniqType = (uniqType, value, typeArr = true) => {
+  const typeValue =  uniqType.map((type ,index) => ({type: type, value: value[index]})).sort((a,b)=> b.value - a.value);
+  return typeArr ? typeValue.map((element) => element.type) : typeValue.map((element) => element.value);
+};

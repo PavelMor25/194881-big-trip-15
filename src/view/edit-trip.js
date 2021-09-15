@@ -88,13 +88,13 @@ const createOffersTemplate = (currentType, offers, offerEvents, isDisabled) => (
 </section>`
 );
 
-const createEditPointTemplate = (data, pointsModel) => {
+const createEditPointTemplate = (data, destinationsModel, offersModel) => {
   const {destination, type, offer, date: {from, to}, price, isPlace, isOffer, isDisabled, isSaving, isDeleting} = data;
-  const places = createPlace(pointsModel.getDestinations());
+  const places = createPlace(destinationsModel.getDestinations());
   const destinationPlace = destination ? destination.place : '';
-  const description = isPlace ? createDescription(destination.place, pointsModel.getDestinations()) : '';
+  const description = isPlace ? createDescription(destination.place, destinationsModel.getDestinations()) : '';
   const typeList = createTypeItemsTemplate(type, isDisabled);
-  const offerList = isOffer ? createOffersTemplate(type, offer, pointsModel.getOffers(), isDisabled) : '';
+  const offerList = isOffer ? createOffersTemplate(type, offer, offersModel.getOffers(), isDisabled) : '';
 
   return (`<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -159,10 +159,11 @@ const createEditPointTemplate = (data, pointsModel) => {
 };
 
 export default class TripPointEdit extends SmartView {
-  constructor(events = NEW_POINT, pointsModel) {
+  constructor(events = NEW_POINT, destinationsModel, offersModel) {
     super();
-    this._pointsModel = pointsModel;
-    this._data = TripPointEdit.parsePointToData(events, this._pointsModel);
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
+    this._data = TripPointEdit.parsePointToData(events, this._offersModel.getOffers());
     this._datepickerStart = null;
     this._datepickerEnd = null;
 
@@ -182,7 +183,7 @@ export default class TripPointEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEditPointTemplate(this._data, this._pointsModel);
+    return createEditPointTemplate(this._data, this._destinationsModel, this._offersModel);
   }
 
   removeElement() {
@@ -200,8 +201,8 @@ export default class TripPointEdit extends SmartView {
     evt.preventDefault();
     this.updateData({
       type: evt.target.dataset.type,
-      isOffer: isOfferList(evt.target.dataset.type, this._pointsModel.getOffers()),
-      offer: getOffers(evt.target.dataset.type, '', this._pointsModel.getOffers()),
+      isOffer: isOfferList(evt.target.dataset.type, this._offersModel.getOffers()),
+      offer: getOffers(evt.target.dataset.type, '', this._offersModel.getOffers()),
     });
   }
 
@@ -210,15 +211,15 @@ export default class TripPointEdit extends SmartView {
       return;
     }
 
-    if (this._data.offer.some((offer) => offer.title === getOffers(this._data.type, evt.target.dataset.offer, this._pointsModel.getOffers()).title)) {
+    if (this._data.offer.some((offer) => offer.title === getOffers(this._data.type, evt.target.dataset.offer, this._offersModel.getOffers()).title)) {
       this.updateData({
-        offer: this._data.offer.filter((offer) => offer.title !== getOffers(this._data.type, evt.target.dataset.offer, this._pointsModel.getOffers()).title),
+        offer: this._data.offer.filter((offer) => offer.title !== getOffers(this._data.type, evt.target.dataset.offer, this._offersModel.getOffers()).title),
       }, true);
       return;
     }
 
     this.updateData({
-      offer: this._data.offer.concat(getOffers(this._data.type, evt.target.dataset.offer, this._pointsModel.getOffers())),
+      offer: this._data.offer.concat(getOffers(this._data.type, evt.target.dataset.offer, this._offersModel.getOffers())),
     }, true);
   }
 
@@ -231,8 +232,8 @@ export default class TripPointEdit extends SmartView {
   _changePlaceHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      destination: getDestination(evt.target.value, this._pointsModel.getDestinations()),
-      isPlace: getDestination(evt.target.value, this._pointsModel.getDestinations()) !== null,
+      destination: getDestination(evt.target.value, this._destinationsModel.getDestinations()),
+      isPlace: getDestination(evt.target.value, this._destinationsModel.getDestinations()) !== null,
     });
   }
 
@@ -355,17 +356,17 @@ export default class TripPointEdit extends SmartView {
 
   reset(event) {
     this.updateData(
-      TripPointEdit.parsePointToData(event, this._pointsModel),
+      TripPointEdit.parsePointToData(event, this._offersModel.getOffers()),
     );
   }
 
-  static parsePointToData(event, pointsModel) {
+  static parsePointToData(event, offersModel) {
     return Object.assign(
       {},
       event,
       {
         isPlace: event.destination !== null,
-        isOffer: isOfferList(event.type, pointsModel.getOffers()),
+        isOffer: isOfferList(event.type, offersModel),
         isDisabled: false,
         isSaving: false,
         isDeleting: false,

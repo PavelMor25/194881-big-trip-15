@@ -12,11 +12,13 @@ import { SortType, UpdateType, UserAction, FilterType} from '../const';
 
 
 export default class Trip {
-  constructor(infoContainer, tripContainer, pointsModel, filterModel, addEventBtn, api) {
+  constructor(infoContainer, tripContainer, pointsModel, filterModel, destinationsModel, offersModel, addEventBtn, api) {
     this._infoContainer = infoContainer;
     this._tripContainer = tripContainer;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
     this._addEventBtn = addEventBtn;
     this._api = api;
     this._pointPresenter = new Map();
@@ -38,7 +40,7 @@ export default class Trip {
     this._handlerSortTypeChange = this._handlerSortTypeChange.bind(this);
     this._changeBtnSatus = this._changeBtnSatus.bind(this);
 
-    this._pointNewPresenter = new PointNewPresenter(this._tripComponent, this._handlerViewAction, this._changeBtnSatus, this._pointsModel);
+    this._pointNewPresenter = new PointNewPresenter(this._tripComponent, this._handlerViewAction, this._changeBtnSatus, this._destinationsModel, this._offersModel);
   }
 
   createPoint() {
@@ -152,7 +154,7 @@ export default class Trip {
   }
 
   _renderPoint(event) {
-    const pointPresenter = new PointPresenter(this._tripComponent, this._handlerViewAction, this._handlerModeChange, this._pointsModel);
+    const pointPresenter = new PointPresenter(this._tripComponent, this._handlerViewAction, this._handlerModeChange, this._destinationsModel, this._offersModel);
     pointPresenter.init(event);
     this._pointPresenter.set(event.id, pointPresenter);
   }

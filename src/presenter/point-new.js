@@ -3,10 +3,11 @@ import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 
 export default class PointNew {
-  constructor(tripListContainer, changeData, changeBtnStatus, pointModel) {
+  constructor(tripListContainer, changeData, changeBtnStatus, destinationsModel, offersModel) {
     this._tripListContainer = tripListContainer;
     this._changeData = changeData;
-    this._pointModel = pointModel;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
     this._changeBtnStatus = changeBtnStatus;
 
     this._tripEditComponent = null;
@@ -21,7 +22,7 @@ export default class PointNew {
       return;
     }
 
-    this._tripEditComponent = new TripPointEditView(undefined, this._pointModel);
+    this._tripEditComponent = new TripPointEditView(undefined, this._destinationsModel, this._offersModel);
     this._tripEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._tripEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 

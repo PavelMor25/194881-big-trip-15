@@ -14,11 +14,12 @@ export const State = {
 };
 
 export default class Point {
-  constructor(eventListContainer, changeData, changeMode, pointsModel) {
+  constructor(eventListContainer, changeData, changeMode, destinationsModel, offersModel) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
-    this._pointsModel = pointsModel;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
 
     this._pointComponent = null;
     this._pointEditComponent = null;
@@ -39,7 +40,7 @@ export default class Point {
     const prevEditComponent = this._pointEditComponent;
 
     this._pointComponent = new TripEventsView(event);
-    this._pointEditComponent = new TripPointEditView(event, this._pointsModel);
+    this._pointEditComponent = new TripPointEditView(event, this._destinationsModel, this._offersModel);
 
     this._pointComponent.setClickHandler(this._handlerEditClick);
     this._pointComponent.setFavoriteClickHandler(this._handlerFavoriteClick);

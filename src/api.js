@@ -1,4 +1,5 @@
 import PointsModel from './model/point';
+import DestinationsModel from './model/destinations';
 
 const Method = {
   GET: 'GET',
@@ -13,19 +14,27 @@ export default class Api {
     this._authorization = authorization;
   }
 
-  getPoints() {
+  getInitData() {
+    return Promise.all([
+      this._getPoints(),
+      this._getDestinations(),
+      this._getOffers(),
+    ]);
+  }
+
+  _getPoints() {
     return this._load({url: 'points'})
       .then(Api.toJSON)
       .then((points) => points.map(PointsModel.adaptToClient));
   }
 
-  getDestinations() {
+  _getDestinations() {
     return this._load({url: 'destinations'})
       .then(Api.toJSON)
-      .then((destinations) => destinations.map(PointsModel.adaptToClientDestination));
+      .then((destinations) => destinations.map(DestinationsModel.adaptToClient));
   }
 
-  getOffers() {
+  _getOffers() {
     return this._load({url: 'offers'})
       .then(Api.toJSON);
   }

@@ -20,7 +20,7 @@ export default class Filter {
   init() {
     const prevFilterComponent = this._filterComponent;
 
-    this._filterComponent = new FiltersView(this._filterModel.getFilter());
+    this._filterComponent = new FiltersView(this._filterModel.getFilter(), this._pointsModel.getPoints());
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {

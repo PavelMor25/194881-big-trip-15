@@ -1,40 +1,18 @@
 import AbstractObserver from '../utils/abstracr-observer';
-import { UpdateType } from '../const';
 
 export default class Points extends AbstractObserver {
   constructor() {
     super();
     this._points = [];
-    this._offers = [];
-    this._destinations = [];
   }
 
-  setPoints(points) {
+  setPoints(update, points) {
     this._points = points.slice();
-  }
-
-  setDestinations(destinations) {
-    this._destinations = destinations.slice();
-  }
-
-  setOffers(offers) {
-    this._offers = offers.slice();
+    this._notify(update);
   }
 
   getPoints() {
     return this._points;
-  }
-
-  getOffers() {
-    return this._offers;
-  }
-
-  getDestinations() {
-    return this._destinations;
-  }
-
-  init() {
-    this._notify(UpdateType.INIT);
   }
 
   updatePoint(updateType, update) {
@@ -137,22 +115,5 @@ export default class Points extends AbstractObserver {
     delete adaptedPoint.isFavorite;
 
     return adaptedPoint;
-  }
-
-  static adaptToClientDestination(destination) {
-    const adaptDestination = Object.assign(
-      {},
-      destination,
-      {
-        place: destination.name,
-        description: destination.description,
-        photos: destination.pictures,
-      },
-    );
-
-    delete adaptDestination.name;
-    delete adaptDestination.pictures;
-
-    return adaptDestination;
   }
 }

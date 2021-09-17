@@ -2,6 +2,8 @@ import TripPointEditView from './../view/edit-trip';
 import TripEventsView from './../view/trip';
 import { UserAction, UpdateType } from '../const';
 import { remove, render, RenderPosition, replace} from './../utils/render';
+import {isOnline} from '../utils/common';
+import {toast} from '../utils/toast';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -14,11 +16,12 @@ export const State = {
 };
 
 export default class Point {
-  constructor(eventListContainer, changeData, changeMode, pointsModel) {
+  constructor(eventListContainer, changeData, changeMode, destinationsModel, offersModel) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
-    this._pointsModel = pointsModel;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
 
     this._pointComponent = null;
     this._pointEditComponent = null;
@@ -39,7 +42,7 @@ export default class Point {
     const prevEditComponent = this._pointEditComponent;
 
     this._pointComponent = new TripEventsView(event);
-    this._pointEditComponent = new TripPointEditView(event, this._pointsModel);
+    this._pointEditComponent = new TripPointEditView(event, this._destinationsModel, this._offersModel);
 
     this._pointComponent.setClickHandler(this._handlerEditClick);
     this._pointComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
@@ -145,6 +148,11 @@ export default class Point {
   }
 
   _handlerEditClick() {
+    if (!isOnline()) {
+      toast('You can\'t edit point offline');
+      return;
+    }
+
     this._replaceCardToForm();
   }
 
@@ -154,6 +162,11 @@ export default class Point {
   }
 
   _handlerFormSubmit(point) {
+    if (!isOnline()) {
+      toast('You can\'t save point offline');
+      return;
+    }
+
     const isMinorUpdate =
       this._point.price !== point.price ||
       this._point.date !== point.date ||
@@ -167,6 +180,11 @@ export default class Point {
   }
 
   _handlerDeleteClick(point) {
+    if (!isOnline()) {
+      toast('You can\'t delete point offline');
+      return;
+    }
+
     this._changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,

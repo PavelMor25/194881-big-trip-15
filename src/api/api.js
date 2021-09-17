@@ -1,5 +1,5 @@
-import PointsModel from './model/point';
-import DestinationsModel from './model/destinations';
+import PointsModel from '../model/point';
+import DestinationsModel from '../model/destinations';
 
 const Method = {
   GET: 'GET',
@@ -14,27 +14,19 @@ export default class Api {
     this._authorization = authorization;
   }
 
-  getInitData() {
-    return Promise.all([
-      this._getPoints(),
-      this._getDestinations(),
-      this._getOffers(),
-    ]);
-  }
-
-  _getPoints() {
+  getPoints() {
     return this._load({url: 'points'})
       .then(Api.toJSON)
       .then((points) => points.map(PointsModel.adaptToClient));
   }
 
-  _getDestinations() {
+  getDestinations() {
     return this._load({url: 'destinations'})
       .then(Api.toJSON)
       .then((destinations) => destinations.map(DestinationsModel.adaptToClient));
   }
 
-  _getOffers() {
+  getOffers() {
     return this._load({url: 'offers'})
       .then(Api.toJSON);
   }
@@ -66,6 +58,16 @@ export default class Api {
       url: `points/${point.id}`,
       method: Method.DELETE,
     });
+  }
+
+  sync(data) {
+    return this._load({
+      url: 'points/sync',
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON);
   }
 
   _load({

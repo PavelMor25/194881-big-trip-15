@@ -1,4 +1,4 @@
-import { getDateFormat, getDateDif} from './../utils/trip-and-info';
+import { getDateFormat, getDateDif} from '../utils/trip-and-info';
 import AbstractView from './abstract';
 import he from 'he';
 
@@ -52,7 +52,7 @@ const createTravelListItem = (events) => {
 </li>`;
 };
 
-export default class TripEvent extends AbstractView {
+export default class TripPoint extends AbstractView {
   constructor(events) {
     super();
     this._events = events;

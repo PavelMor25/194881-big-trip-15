@@ -1,5 +1,5 @@
-import TripPointEditView from './../view/edit-trip';
-import TripEventsView from './../view/trip';
+import TripPointEditView from '../view/trip-point-edit';
+import TripEventsView from '../view/trip-point';
 import { UserAction, UpdateType } from '../const';
 import { remove, render, RenderPosition, replace} from './../utils/render';
 import {isOnline} from '../utils/common';

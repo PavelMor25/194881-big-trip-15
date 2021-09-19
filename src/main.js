@@ -75,12 +75,6 @@ const handleSiteMenuClick = (menuItem) => {
 
 tripPresenter.init();
 
-
-// Promise.all([
-//   apiWithProvider.getPoints(),
-//   apiWithProvider.getDestinations(),
-//   apiWithProvider.getOffers(),
-// ])
 apiWithProvider.getInitData()
   .then((data) => {
     const [points, destinations, offers] = data;

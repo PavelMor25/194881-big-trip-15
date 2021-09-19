@@ -1,4 +1,4 @@
-import FiltersView from '../view/filter';
+import FiltersView from '../view/filters';
 import { render, RenderPosition, replace, remove } from '../utils/render';
 import { UpdateType } from '../const';
 

@@ -4,7 +4,7 @@ import TripSortView from './../view/trip-sort';
 import TripListView from './../view/trip-list';
 import LoadingView from '../view/loading';
 import PointNewPresenter from './point-new';
-import EmptyListView from './../view/empty-events';
+import EmptyListView from '../view/empty-list';
 import PointPresenter, {State as PointPresenterViewState} from './point';
 import { render, RenderPosition, remove} from './../utils/render';
 import { sortDay, sortPrice, sortTime, filter } from '../utils/trip-and-info';
@@ -221,6 +221,7 @@ export default class Trip {
         this._renderTripList();
         break;
       case UpdateType.MAJOR:
+        this._destroyNewPoint();
         this._clearTripInfo();
         this._renderInfo();
         this._clearTripList(true);

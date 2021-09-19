@@ -248,6 +248,7 @@ export default class TripPointEdit extends SmartView {
       {
         defaultDate: this._data.date.from,
         maxDate: this._data.date.to,
+        minDate: 'today',
         enableTime: true,
         altInput: true,
         altFormat: 'd/m/y H:i',

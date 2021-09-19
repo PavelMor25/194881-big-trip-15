@@ -1,4 +1,4 @@
-import TripPointEditView from '../view/edit-trip';
+import TripPointEditView from '../view/trip-point-edit';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 
@@ -67,9 +67,9 @@ export default class PointNew {
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
-
       point,
     );
+
   }
 
   _handleDeleteClick() {

@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-// import { offerEvents, destinationList } from '../mock/trip-mock';
 import { FilterType } from '../const';
 
 export const sortDay = (dayA, dayB) => dayA.date.from - dayB.date.from;
@@ -24,7 +23,7 @@ export const getDateDif = (dateFrom, dateTo) => {
 };
 
 export const getTotalPrice = (events) => events.reduce(
-  (totalPrice, element) => totalPrice + Number(element.price) +
+  (totalPrice, element) => totalPrice + element.price +
   (element.offer
     ? element.offer.reduce((sumOffer, offer) => sumOffer + offer.price, 0)
     : 0), 0);

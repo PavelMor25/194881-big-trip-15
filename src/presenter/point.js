@@ -2,7 +2,7 @@ import TripPointEditView from '../view/trip-point-edit';
 import TripEventsView from '../view/trip-point';
 import { UserAction, UpdateType } from '../const';
 import { remove, render, RenderPosition, replace} from './../utils/render';
-import {isOnline} from '../utils/common';
+import {isOnline, isEscape} from '../utils/common';
 import {toast} from '../utils/toast';
 
 const Mode = {
@@ -126,7 +126,7 @@ export default class Point {
   }
 
   _onEscKeyHandler(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+    if (isEscape(evt)) {
       evt.preventDefault();
       this._pointEditComponent.reset(this._point);
       this._replaceFormToCard();

@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 export const makeItemsUniq = (items) => [...new Set(items)];
 
-export const countPointsByMoney = (items, type) => items.filter((point) => point.type === type).reduce((prevValue, curElem) => prevValue + Number(curElem.price), 0);
+export const countPointsByMoney = (items, type) => items.filter((point) => point.type === type).reduce((prevValue, curElem) => prevValue + curElem.price, 0);
 
 export const countPointsByType = (items, type) => items.filter((point) => point.type === type).length;
 

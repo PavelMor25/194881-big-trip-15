@@ -1,6 +1,7 @@
 import TripPointEditView from '../view/trip-point-edit';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
+import {isEscape} from '../utils/common';
 
 export default class PointNew {
   constructor(tripListContainer, changeData, changeBtnStatus, destinationsModel, offersModel) {
@@ -77,7 +78,7 @@ export default class PointNew {
   }
 
   _escKeyDownHandler(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+    if (isEscape(evt)) {
       evt.preventDefault();
       this.destroy();
     }
